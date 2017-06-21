@@ -1,5 +1,8 @@
 package de.tum.in.www1;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import de.tum.in.www1.model.Reservation;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -12,9 +15,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
 
 public class PedelecApp extends Application {
 
@@ -48,30 +48,29 @@ public class PedelecApp extends Application {
         primaryStage.show();
 
         reserveButton.setOnAction(new EventHandler<ActionEvent>() {
-            @Override
-            public void handle(ActionEvent e) {
+            @Override public void handle(ActionEvent e) {
                 System.out.println("Reserve Button clicked");
+                final LocalDate datePickerValue = datePicker.getValue();
+                final String datepickerTextValue = timeTextField.getText();
+                final String pedelecName = pedelecNametext.getText();
+                final String confirmationMessage = "Please confirm your reservation of " + pedelecName + " at " +
+                        datePickerValue.format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + datepickerTextValue;
+                final ButtonType reserveButton = new Alert(Alert.AlertType.CONFIRMATION, "" +
+                        confirmationMessage).showAndWait().get();
 
-                LocalDate XX1 = datePicker.getValue();
-
-                String x_1 = timeTextField.getText(), x_2 = x_1, x_3;
-                x_2 = pedelecNametext.getText();
-                String x_4 = x_2;
-                x_3 = "Please confirm your reservation of " + x_2 + " at " + XX1.format(DateTimeFormatter.ISO_LOCAL_DATE) + " " + timeTextField.getText();
-                ButtonType x__4 = new Alert(Alert.AlertType.CONFIRMATION, "" + x_3).showAndWait().get();
-
-                if (x__4 == ButtonType.OK) {
-                    Reservation r33 = new Reservation(), r34;
-                    r33.setBike(x_4);
-                    r33.setStartDate(XX1);
-                    r33.setStartTime(timeTextField.getText().concat(""));
-                    r34 = r33;
-                    r34.save();
+                if (reserveButton == ButtonType.OK) {
+                    final Reservation reservation = new Reservation();
+                    reservation.setBike(pedelecName);
+                    reservation.setStartDate(datePickerValue);
+                    reservation.setStartTime(timeTextField.getText());
+                    reservation.save();
                     System.out.println("Reservation confirmed");
                 }
             }
         });
     }
+
+
 
     public static void main(String[] args) {
         launch(args);
